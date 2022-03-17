@@ -1,5 +1,5 @@
-#1'''
-'''ice_creams = int(input("How many ice creams do you want?"))
+#1
+ice_creams = int(input("How many ice creams do you want?"))
 if ice_creams <=20:
 	print(f"You wanted {ice_creams} ice creams, we will have that ready in no time.")
 else:
@@ -33,7 +33,7 @@ question_2 = input("Who directed Passion of the Christ?")
 if question_2 == "Mel Gibson":
 	print(f"Correct!")
 else:
-	print(f"Wrong! Mel Gibson directed the film")'''
+	print(f"Wrong! Mel Gibson directed the film")
 #7
 print("Welcome to this quiz. Make sure to USE CAPITAL LETTERS where needed.")
 score = 0
