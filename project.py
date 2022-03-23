@@ -12,11 +12,11 @@ Room.items = Bag()
 #DEFINE ROOMS
 ##############################
 jail = Room("You are stuck in a rusty cell. You see a dead body and a rusty saw one the floor next to you. ")
-library = Room("You are in the library. You see some books on the table. Next to the books is a key.")
-folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a key.")
+library = Room("You are in the library. You see some books on the table. Next to the books is a bronze key labeled computer room.")
+folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a sliver key labeled library 3 .")
 
-bathroom = Room("You are in the bathroom. There is a key on the floor next to a toilet.")
-staffroom = Room("You are in the staffroom. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair.")
+bathroom = Room("You are in the bathroom. There is a rusty key on the floor next to a toilet.")
+staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key lable library key 2.")
 computer_room = Room("You are in the computer_room. There are rows and rows of computers")
 
 hallway = Room("You are in the hallway. There is a door and the end.")
@@ -29,37 +29,37 @@ trap_room_4 = Room("You found a trap room. You were found.")
 ##############################
 #DEFINE CONNECTIONS
 ##############################
-jail.north = staffroom
+jail.north = staff_room
 jail.west = library
 library.south = hallway
 library.west = computer_room
 computer_room.west = trap_room_1
 computer_room.north = trap_room_2
-staffroom.north = trap_room_3
-staffroom.east = bathroom
+staff_room.north = trap_room_3
+staff_room.east = bathroom
 bathroom.south = folder_room
 folder_room.east = trap_room_4
 
 ##############################
 #DEFINE ITEMS
 ##############################
-door_key_1 = Item("key", "door key", "library key")
-door_key_1.description = "You look at the key. It is labled library key 1"
+rusty_key = Item("rusty key", "library key")
+rusty_key.description = "You look at the rusty key. It is labeled library key 1"
 
-door_key_2 = Item("key", "door key", "library key 2")
-door_key_2.description = "You look at the key. It is labled library key 2"
+golden_key = Item("golden key", "library key 2")
+golden_key.description = "You look at the golden key. It is labeled library key 2"
 
-door_key_3 = Item("key", "door key", "library key 3")
-door_key_3.description = "You look at the key. It is labled library key 3"
+silver_key = Item("silver key", "library key 3")
+silver_key.description = "You look at the silver key. It is labeled library key 3"
 
-door_key_4 = Item("key", "door key", "computer room key")
-door_key_4.description = "You look at the key. It is labled computer room"
+bronze_key = Item("bronze key", "computer room key")
+bronze_key.description = "You look at the bronze key. It is labeled computer room"
 
 book = Item("book", "books")
 book.description = "You read the book. It has information about why the warehouse shut down. On the second page there seems to be a big blood stain"
 
 computer = Item("computer", "computers")
-computer.description = "You sit down at the computer it's already sgined in. On the screen there is a picture of a mand and information below"
+computer.description = "You sit down at the computer it's already signed in. On the screen there is a picture of a man and information below"
 
 folder = Item("folder", "file")
 folder.description = "You open one of the folder that reads Misha Shipin. Inside is paper with their information, from their location to where they were born"
@@ -71,17 +71,17 @@ newspaper = Item("paper", "newspaper", "news")
 newspaper.description = "You read the newspaper. There is a police notice on the front page reporting 53 missing people"
 
 flashlight = Item("light", "flashlight", "torch")
-flashlight.description = "You grab the flashlight and you trun it on. Surprisingly the flashlight has batteries"
+flashlight.description = "You grab the flashlight and you turn it on. Surprisingly the flashlight has batteries"
 
 ##############################
 #ADD ITEMS TO BAGS
 ##############################
-staffroom.items.add(door_key_1)
-staffroom.items.add(newspaper)
-staffroom.items.add(flashlight)
-folder_room.items.add(door_key_2)
-bathroom.items.add(door_key_3)
-library.items.add(door_key_4)
+staff_room.items.add(rusty_key)
+staff_room.items.add(newspaper)
+staff_room.items.add(flashlight)
+folder_room.items.add(golden_key)
+bathroom.items.add(silver_key)
+library.items.add(bronze_key)
 library.items.add(book)
 computer_room.items.add(computer)
 folder_room.items.add(folder)
@@ -136,7 +136,7 @@ def look():
 def get_item(item):
 	#check if item is in room
 	#take it out of room
-	#put into invetory
+	#put into inventory
 	#otherwise tell user there is no item
 	if item in current_room.items:
 		t = current_room.items.take(item)
@@ -144,6 +144,7 @@ def get_item(item):
 		print(f"You pick up the {item}")
 	else:
 		print(f"You don't see a {item}")
+
 
 @when ("inventory")
 def check_inventory():
@@ -167,30 +168,24 @@ def search_body():
 
 @when("use ITEM")
 def  use(item):
-	if item == door_key_1 and current_room == library:
-		print("You use the key and one of the locks of the door open")
-		door_key_1 = True
+	if item in inventory and current_room == library and item == "rusty key":
+		print("You use the rusty key and one of the locks of the door open")
+		rusty_key = True
+	elif item == rusty_key and current_room == library:
+		print("You use the key and the door open")
 	else:
+
+
+	if item in inventory and current_room == library and item == "golden key":
+		print("You use the golden key and one of the locks of the door open")
+		golden_key = True
+	
+	if item in inventory and current_room == library and item == "sliver key":
+		print("You use the sliver key and one of the locks of the door open")
+		silver_key = True
+		else:
+		
 		print("You can't use that here")
-
-@when("use ITEM")
-def  use(item):
-	if item == door_key_2 and current_room == library:
-		print("You use the key and one of the locks of the door open")
-		door_key_1 = True
-	else:
-		print("You can't use that here")
-
-@when("use ITEM")
-def  use(item):
-	if item == door_key_3 and current_room == library:
-		print("You use the key and one of the locks of the door open")
-		door_key_1 = True
-	else:
-		print("You can't use that here")
-
-
-
 
 ##############################
 #MAIN FUNCTION
