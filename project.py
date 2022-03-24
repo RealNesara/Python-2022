@@ -13,10 +13,10 @@ Room.items = Bag()
 ##############################
 jail = Room("You are stuck in a rusty cell. You see a dead body and a rusty saw one the floor next to you. ")
 library = Room("You are in the library. You see some books on the table. Next to the books is a bronze key labeled computer room.")
-folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a sliver key labeled library 3 .")
+folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a rusty key labeled library 3 .")
 
-bathroom = Room("You are in the bathroom. There is a rusty key on the floor next to a toilet.")
-staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key lable library key 2.")
+bathroom = Room("You are in the bathroom. There is a sliver key on the floor next to a toilet.")
+staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key labeled library key 2.")
 computer_room = Room("You are in the computer_room. There are rows and rows of computers")
 
 hallway = Room("You are in the hallway. There is a door and the end.")
@@ -32,7 +32,7 @@ trap_room_4 = Room("You found a trap room. You were found.")
 jail.north = staff_room
 jail.west = library
 library.south = hallway
-library.west = computer_room
+#library.west = computer_room #will add in later because it starts locked
 computer_room.west = trap_room_1
 computer_room.north = trap_room_2
 staff_room.north = trap_room_3
@@ -76,10 +76,10 @@ flashlight.description = "You grab the flashlight and you turn it on. Surprising
 ##############################
 #ADD ITEMS TO BAGS
 ##############################
-staff_room.items.add(rusty_key)
+staff_room.items.add(golden_key)
 staff_room.items.add(newspaper)
 staff_room.items.add(flashlight)
-folder_room.items.add(golden_key)
+folder_room.items.add(rusty_key)
 bathroom.items.add(silver_key)
 library.items.add(bronze_key)
 library.items.add(book)
@@ -164,28 +164,28 @@ def search_body():
 	elif current_room == jail and body_searched == True:
 		print("You already searched the body")
 	else:
-		print("There is no body here to search")\
+		print("There is no body here to search")
+
 
 @when("use ITEM")
 def  use(item):
 	if item in inventory and current_room == library and item == "rusty key":
 		print("You use the rusty key and one of the locks of the door open")
 		rusty_key = True
-	elif item == rusty_key and current_room == library:
-		print("You use the key and the door open")
-	else:
-
-
-	if item in inventory and current_room == library and item == "golden key":
+	
+	elif item in inventory and current_room == library and item == "golden key":
 		print("You use the golden key and one of the locks of the door open")
 		golden_key = True
 	
-	if item in inventory and current_room == library and item == "sliver key":
-		print("You use the sliver key and one of the locks of the door open")
+	elif item in inventory and current_room == library and item == "silver key":
+		print("You use the silver key and one of the locks of the door open")
 		silver_key = True
-		else:
-		
+	else:
 		print("You can't use that here")
+
+	if rusty_key == True and silver_key == True and golden_key == True:
+		print("You enter the final key and it unlocks a door to the west")
+		library.west = computer_room
 
 ##############################
 #MAIN FUNCTION
