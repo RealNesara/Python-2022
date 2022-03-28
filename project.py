@@ -11,7 +11,7 @@ Room.items = Bag()
 ##############################
 #DEFINE ROOMS
 ##############################
-jail = Room("You are stuck in a rusty cell. You see a dead body on the floor next to you. ")
+jail = Room("You are in a rusty cell. You see a dead body on the floor next to you. ")
 library = Room("You are in the library. You see some books on the table.")
 folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a rusty key labeled library 3 .")
 
@@ -19,7 +19,7 @@ bathroom = Room("You are in the bathroom. There is a silver key on the floor nex
 staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key labeled library key 2.")
 computer_room = Room("You are in the computer room. There are rows and rows of computers")
 
-hallway = Room("You are in the hallway. There is a door and the end.")
+hallway = Room("You are in a dark room. You can't see anything")
 trap_room_1 = Room("You found a trap room. You lost.")
 trap_room_2 = Room("You found a trap room. You died.")
 
@@ -68,6 +68,10 @@ newspaper.description = "You read the newspaper. There is a police notice on the
 flashlight = Item("light", "flashlight", "torch")
 flashlight.description = "You grab the flashlight and you turn it on. Surprisingly the flashlight has batteries"
 
+key_card = Item("pass", "pin")
+key_card.description = "You look at the key card it reads 73923"
+
+
 ##############################
 #ADD ITEMS TO BAGS
 ##############################
@@ -79,6 +83,7 @@ bathroom.items.add(silver_key)
 library.items.add(book)
 computer_room.items.add(computer)
 folder_room.items.add(folder)
+jail.items.add(key_card)
 
 ##############################
 #DEFINE AND VARIABLES
@@ -88,6 +93,7 @@ inventory = Bag()
 rusty_key_used = False
 silver_key_used = False
 golden_key_used = False
+body_searched = False
 
 ##############################
 #BINDS (e.g "@when("look"))
@@ -110,12 +116,16 @@ def travel(direction):
 
 @when("look")
 def look():
+	if current_room == hallway:
+		print("It's too dark to see here")
+		return
 	print(current_room)
 	print(f"There are exits, to the ",current_room.exits())
 	if len(current_room.items) > 0:
 		print("You also see:")
 		for item in current_room.items:
 			print(item)
+
 
 @when("get ITEM")
 @when("take ITEM")
@@ -160,11 +170,13 @@ def  use(item):
 	if rusty_key_used == True and silver_key_used == True and golden_key_used == True:
 		print("You enter the final key and it unlocks a door to the west")
 		library.west = computer_room
-
+	elif item in inventory and current_room == hallway and item == "flashlight":
+		print("You turn on the flashlight. The room quickly lights up revealing a long hallway with a door at the end.")
+		hallway.description = "It's too dark here"
+	
 
 @when("read ITEM")
 @when("look at ITEM")
-@when("use ITEM")
 def  read(item):
 	if item in inventory and current_room == folder_room and item == "folder":
 		print("You open one of the folder that reads Misha Shipin. Inside is paper with their information, from their location to where they were born")
@@ -178,6 +190,31 @@ def  read(item):
 		print("You read the book. It has information about why the warehouse shut down. On the second page there seems to be a big blood stain")
 		used_books = True
 
+
+@when("enter password")
+@when("enter pin")
+@when("enter pass")
+def computer_room_win():
+	if item in inventory and current_room == computer_room and item == "key_card":
+		print("You enter the code and escape. You win")
+	else:
+		print("there is no where to enter the code")
+		print("You don't have the code. You can't just guess it.")
+
+
+@when("search body")
+@when("look at body")
+@when("search man")
+def search_body():
+	global body_searched
+	if current_room == jail and body_searched == False:
+		print("You search the body and a key card falls to the floor")
+		current_room.item.add(keycard)
+		body_searched = True
+	elif current_room == bridge and body_searched == True:
+		print("You already searched the body")
+	else:
+		print("There is no body here to search")
 
 
 
