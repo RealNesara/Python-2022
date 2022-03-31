@@ -11,13 +11,13 @@ Room.items = Bag()
 ##############################
 #DEFINE ROOMS
 ##############################
-jail = Room("You are in a rusty cell. You see a dead body on the floor next to you. ")
+jail = Room("You are out from the cell. You see a dead body on the floor next to you. ")
 library = Room("You are in the library. You see some books on the table.")
 folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a rusty key labeled library 3 .")
 
 bathroom = Room("You are in the bathroom. There is a silver key on the floor next to a toilet.")
 staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key labeled library key 2.")
-computer_room = Room("You are in the computer room. There are rows and rows of computers")
+computer_room = Room("You are in the computer room. There are rows and rows of computers. There is one laptop on the desk. It is on but it requires a pin to login.")
 
 hallway = Room("You are in a dark room. You can't see anything")
 trap_room_1 = Room("You found a trap room. You lost.")
@@ -25,6 +25,7 @@ trap_room_2 = Room("You found a trap room. You died.")
 
 trap_room_3 = Room("You found a trap room. You failed.")
 trap_room_4 = Room("You found a trap room. You were found.")
+jail_cell = Room("You are stuck in a cell. There is a rusty saw on the floor next to you.")
 
 ##############################
 #DEFINE CONNECTIONS
@@ -56,8 +57,11 @@ silver_key.description = "You look at the silver key. It is labeled library key 
 book = Item("book", "books")
 book.description = "You read the book. It has information about why the warehouse shut down. On the second page there seems to be a big blood stain"
 
-computer = Item("computer", "computers")
-computer.description = "You sit down at the computer it's already signed in. On the screen there is a picture of a man and information below"
+rusty_saw = Item("rusty saw", "saw")
+rusty_saw.description = "You grab the saw. It is covered it rust and is slowly disintegrating in your hand"
+
+laptop = Item("laptop", "computer")
+laptop.description = "You sit down at the laptop it needs a pin to login."
 
 folder = Item("folder", "file")
 folder.description = "You open one of the folder that reads Misha Shipin. Inside is paper with their information, from their location to where they were born"
@@ -68,7 +72,7 @@ newspaper.description = "You read the newspaper. There is a police notice on the
 flashlight = Item("light", "flashlight", "torch")
 flashlight.description = "You grab the flashlight and you turn it on. Surprisingly the flashlight has batteries"
 
-key_card = Item("pass", "pin")
+key_card = Item("pass", "pin", "key card", "card")
 key_card.description = "You look at the key card it reads 73923"
 
 
@@ -81,19 +85,22 @@ staff_room.items.add(flashlight)
 folder_room.items.add(rusty_key)
 bathroom.items.add(silver_key)
 library.items.add(book)
-computer_room.items.add(computer)
+computer_room.items.add(laptop)
 folder_room.items.add(folder)
 jail.items.add(key_card)
+jail_cell.items.add(rusty_saw)
 
 ##############################
 #DEFINE AND VARIABLES
 ##############################
-current_room = jail
+current_room = jail_cell
 inventory = Bag()
 rusty_key_used = False
 silver_key_used = False
 golden_key_used = False
 body_searched = False
+key_card_used = False
+rusty_saw_used = False
 
 ##############################
 #BINDS (e.g "@when("look"))
@@ -152,7 +159,7 @@ def check_inventory():
 
 @when("use ITEM")
 def  use(item):
-	global rusty_key_used,silver_key_used,golden_key_used
+	global rusty_key_used,silver_key_used,golden_key_used,current_room
 	if item in inventory and current_room == library and item == "rusty key":
 		print("You use the rusty key and one of the locks of the door open")
 		rusty_key_used = True
@@ -170,10 +177,16 @@ def  use(item):
 	if rusty_key_used == True and silver_key_used == True and golden_key_used == True:
 		print("You enter the final key and it unlocks a door to the west")
 		library.west = computer_room
+	
 	elif item in inventory and current_room == hallway and item == "flashlight":
 		print("You turn on the flashlight. The room quickly lights up revealing a long hallway with a door at the end.")
 		hallway.description = "It's too dark here"
 	
+	elif item in inventory and current_room == jail_cell and item == "rusty saw":
+		print("You use the saw. It cuts the bars of the cell and lets you out but it broke")
+		current_room = jail
+		print("you climb through the cell bars and are now in the jail")
+		print(current_room)		
 
 @when("read ITEM")
 @when("look at ITEM")
@@ -190,16 +203,26 @@ def  read(item):
 		print("You read the book. It has information about why the warehouse shut down. On the second page there seems to be a big blood stain")
 		used_books = True
 
+	elif item in inventory and current_room == jail and item == "key card":
+		print("You look at the key card. It has a pin that reads 73923 ")
+		used_key_card = True
+
 
 @when("enter password")
 @when("enter pin")
 @when("enter pass")
 def computer_room_win():
-	if item in inventory and current_room == computer_room and item == "key_card":
-		print("You enter the code and escape. You win")
+	if len(inventory)<10:
+		print("You need more evidence to show the police. Get more items.")
+		return
+	if "keycard" not in inventory:
+		if current_room == computer_room:
+			print("You enter the code and escape. .You win")
 	else:
-		print("there is no where to enter the code")
-		print("You don't have the code. You can't just guess it.")
+		print("There is no where to enter the code")
+		print("You don't have the code. You don't know numbers so you can't guess it.")
+		if current_room in [computer_room]:
+			quit()
 
 
 @when("search body")
@@ -208,10 +231,9 @@ def computer_room_win():
 def search_body():
 	global body_searched
 	if current_room == jail and body_searched == False:
-		print("You search the body and a key card falls to the floor")
-		current_room.item.add(keycard)
+		print("You search the body and a key card falls to the floor. There is something written on it.")
 		body_searched = True
-	elif current_room == bridge and body_searched == True:
+	elif current_room == jail and body_searched == True:
 		print("You already searched the body")
 	else:
 		print("There is no body here to search")
