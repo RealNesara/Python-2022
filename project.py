@@ -11,9 +11,9 @@ Room.items = Bag()
 ##############################
 #DEFINE ROOMS
 ##############################
-jail = Room("You are out from the cell. You see a dead body on the floor next to you. ")
+jail = Room("You are out from the cell. You see a dead body on the floor next to you. The body seems to have something in it's pocket. ")
 library = Room("You are in the library. You see some books on the table.")
-folder_room = Room("You are in the folder room. You are surrounded by files. On the table next to a locker there is a rusty key labeled library 3 .")
+folder_room = Room("You are in the folder room. You are surrounded by folders. On the table next to a locker there is a rusty key labeled library 3 .")
 
 bathroom = Room("You are in the bathroom. There is a silver key on the floor next to a toilet.")
 staff_room = Room("You are in the staff room. There is a warm cup of coffee on the counter next to it is a flashlight. There is also a newspaper on the chair with a golden key labeled library key 2.")
@@ -25,7 +25,7 @@ trap_room_2 = Room("You found a trap room. You died.")
 
 trap_room_3 = Room("You found a trap room. You failed.")
 trap_room_4 = Room("You found a trap room. You were found.")
-jail_cell = Room("You are stuck in a cell. There is a rusty saw on the floor next to you.")
+jail_cell = Room("You are stuck in a cell. There is a rusty saw on the floor next to you. You have been kidnapped by a serial killer, break out and escape before you get found. Make sure you get evidence to show the police. Be aware that there will be death rooms that will kill you if you run in to them.")
 
 ##############################
 #DEFINE CONNECTIONS
@@ -72,8 +72,10 @@ newspaper.description = "You read the newspaper. There is a police notice on the
 flashlight = Item("light", "flashlight", "torch")
 flashlight.description = "You grab the flashlight and you turn it on. Surprisingly the flashlight has batteries"
 
-key_card = Item("pass", "pin", "key card", "card")
+key_card = Item("pass", "pin", "key card", "card", "keycard")
 key_card.description = "You look at the key card it reads 73923"
+
+warm_coffee = Item("coffee", "warm coffee", "cup of coffee","cup")
 
 
 ##############################
@@ -87,7 +89,7 @@ bathroom.items.add(silver_key)
 library.items.add(book)
 computer_room.items.add(laptop)
 folder_room.items.add(folder)
-jail.items.add(key_card)
+#jail.items.add(key_card)
 jail_cell.items.add(rusty_saw)
 
 ##############################
@@ -157,6 +159,7 @@ def check_inventory():
 
 
 
+
 @when("use ITEM")
 def  use(item):
 	global rusty_key_used,silver_key_used,golden_key_used,current_room
@@ -171,22 +174,22 @@ def  use(item):
 	elif item in inventory and current_room == library and item == "silver key":
 		print("You use the silver key and one of the locks of the door open")
 		silver_key_used = True
-	else:
-		print("You can't use that here")
 
 	if rusty_key_used == True and silver_key_used == True and golden_key_used == True:
 		print("You enter the final key and it unlocks a door to the west")
 		library.west = computer_room
 	
 	elif item in inventory and current_room == hallway and item == "flashlight":
-		print("You turn on the flashlight. The room quickly lights up revealing a long hallway with a door at the end.")
+		print("You turn on the flashlight. The room quickly lights up revealing a long hallway with a door to the east.")
 		hallway.description = "It's too dark here"
 	
 	elif item in inventory and current_room == jail_cell and item == "rusty saw":
 		print("You use the saw. It cuts the bars of the cell and lets you out but it broke")
 		current_room = jail
-		print("you climb through the cell bars and are now in the jail")
-		print(current_room)		
+		print("you climb through the cell bars and are now in the jail room")
+		print(current_room)	
+	else:
+		print("You can't use that here")	
 
 @when("read ITEM")
 @when("look at ITEM")
@@ -205,7 +208,7 @@ def  read(item):
 
 	elif item in inventory and current_room == jail and item == "key card":
 		print("You look at the key card. It has a pin that reads 73923 ")
-		used_key_card = True
+		
 
 
 @when("enter password")
@@ -217,7 +220,7 @@ def computer_room_win():
 		return
 	if "keycard" not in inventory:
 		if current_room == computer_room:
-			print("You enter the code and escape. .You win")
+			print("You enter the code and escape. You win :)")
 	else:
 		print("There is no where to enter the code")
 		print("You don't have the code. You don't know numbers so you can't guess it.")
@@ -231,7 +234,8 @@ def computer_room_win():
 def search_body():
 	global body_searched
 	if current_room == jail and body_searched == False:
-		print("You search the body and a key card falls to the floor. There is something written on it.")
+		print("You search the body and a key card falls to the floor. There is a pin written on it.")
+		jail.items.add(key_card)
 		body_searched = True
 	elif current_room == jail and body_searched == True:
 		print("You already searched the body")
