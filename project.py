@@ -12,7 +12,7 @@ Room.items = Bag()
 #DEFINE ROOMS
 ##############################
 jail = Room("You are out from the cell. You see a dead body on the floor next to you. The body seems to have something in it's pocket. ")
-library = Room("You are in the library. You see some books on the table.")
+library = Room("You are in the library. You see some books on the table. There is also a door to the west but it's locked.")
 folder_room = Room("You are in the folder room. You are surrounded by folders. On the table next to a locker there is a rusty key labeled library 3 .")
 
 bathroom = Room("You are in the bathroom. There is a silver key on the floor next to a toilet.")
@@ -76,6 +76,7 @@ key_card = Item("pass", "pin", "key card", "card", "keycard")
 key_card.description = "You look at the key card it reads 73923"
 
 warm_coffee = Item("coffee", "warm coffee", "cup of coffee","cup")
+warm_coffee.description = "You smell the coffee it smell suspicious. Don't consume it."
 
 
 ##############################
@@ -91,6 +92,7 @@ computer_room.items.add(laptop)
 folder_room.items.add(folder)
 #jail.items.add(key_card)
 jail_cell.items.add(rusty_saw)
+staff_room.items.add(warm_coffee)
 
 ##############################
 #DEFINE AND VARIABLES
@@ -103,6 +105,7 @@ golden_key_used = False
 body_searched = False
 key_card_used = False
 rusty_saw_used = False
+used_warm_coffee = False
 
 ##############################
 #BINDS (e.g "@when("look"))
@@ -158,8 +161,6 @@ def check_inventory():
 		print(item)
 
 
-
-
 @when("use ITEM")
 def  use(item):
 	global rusty_key_used,silver_key_used,golden_key_used,current_room
@@ -183,7 +184,7 @@ def  use(item):
 		print("You turn on the flashlight. The room quickly lights up revealing a long hallway with a door to the east.")
 		hallway.description = "It's too dark here"
 	
-	elif item in inventory and current_room == jail_cell and item == "rusty saw":
+	elif item in inventory and current_room == jail_cell and item == "saw":
 		print("You use the saw. It cuts the bars of the cell and lets you out but it broke")
 		current_room = jail
 		print("you climb through the cell bars and are now in the jail room")
@@ -202,13 +203,20 @@ def  read(item):
 		print("You read the newspaper. There is a police notice on the front page reporting 53 missing people and 73 dead bodies")
 		used_newspaper = True
 
-	elif item in inventory and current_room == library and item == "books":
+	elif item in inventory and current_room == library and item == "book":
 		print("You read the book. It has information about why the warehouse shut down. On the second page there seems to be a big blood stain")
 		used_books = True
 
 	elif item in inventory and current_room == jail and item == "key card":
 		print("You look at the key card. It has a pin that reads 73923 ")
+
 		
+@when("drink ITEM")
+def drink(item):
+	if item in inventory and current_room == staff_room and item == "coffee":
+		print("You smell the coffee it smell suspicious. You drink the coffee, it runs down you digestive system and burns you from the inside. You died")
+		used_warm_coffee = True
+		quit()
 
 
 @when("enter password")
@@ -234,7 +242,7 @@ def computer_room_win():
 def search_body():
 	global body_searched
 	if current_room == jail and body_searched == False:
-		print("You search the body and a key card falls to the floor. There is a pin written on it.")
+		print("You search the body and a card falls to the floor. There is a pin written on it.")
 		jail.items.add(key_card)
 		body_searched = True
 	elif current_room == jail and body_searched == True:
