@@ -78,6 +78,9 @@ key_card.description = "You look at the key card it reads 73923"
 warm_coffee = Item("coffee", "warm coffee", "cup of coffee","cup")
 warm_coffee.description = "You smell the coffee it smell suspicious. Don't consume it."
 
+dead_body = Item("body", "dead body", "man", "dead man")
+dead_body.description = "You see a dead man on the ground. It seems to have been stabed to death."
+
 
 ##############################
 #ADD ITEMS TO BAGS
@@ -93,6 +96,7 @@ folder_room.items.add(folder)
 #jail.items.add(key_card)
 jail_cell.items.add(rusty_saw)
 staff_room.items.add(warm_coffee)
+jail.items.add(dead_body)
 
 ##############################
 #DEFINE AND VARIABLES
@@ -175,6 +179,8 @@ def  use(item):
 	elif item in inventory and current_room == library and item == "silver key":
 		print("You use the silver key and one of the locks of the door open")
 		silver_key_used = True
+	else:
+		print("You can't use that here")
 
 	if rusty_key_used == True and silver_key_used == True and golden_key_used == True:
 		print("You enter the final key and it unlocks a door to the west")
@@ -188,9 +194,7 @@ def  use(item):
 		print("You use the saw. It cuts the bars of the cell and lets you out but it broke")
 		current_room = jail
 		print("you climb through the cell bars and are now in the jail room")
-		print(current_room)	
-	else:
-		print("You can't use that here")	
+		print(current_room)		
 
 @when("read ITEM")
 @when("look at ITEM")
@@ -212,10 +216,20 @@ def  read(item):
 
 		
 @when("drink ITEM")
+@when("lick ITEM")
+@when("eat ITEM")
 def drink(item):
 	if item in inventory and current_room == staff_room and item == "coffee":
 		print("You smell the coffee it smell suspicious. You drink the coffee, it runs down you digestive system and burns you from the inside. You died")
 		used_warm_coffee = True
+		quit()
+
+	elif item in inventory and current_room == library and item == "book":
+		print("You lick the blood stain. You died because of blood poisoning.")
+		quit()
+
+	elif item in current_room == jail and item == "dead body":
+		print("You eat the dead man. You died because of bad ideas.")
 		quit()
 
 
@@ -232,8 +246,7 @@ def computer_room_win():
 	else:
 		print("There is no where to enter the code")
 		print("You don't have the code. You don't know numbers so you can't guess it.")
-		if current_room in [computer_room]:
-			quit()
+		quit()
 
 
 @when("search body")
