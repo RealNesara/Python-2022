@@ -164,6 +164,13 @@ def check_inventory():
 	for item in inventory:
 		print(item)
 
+@when("eat body")
+@when("eat")
+def eatbody():
+	if current_room == jail:
+		print("You eat the dead man. You died because of bad ideas.")
+		quit()
+
 
 @when("use ITEM")
 def  use(item):
@@ -179,10 +186,8 @@ def  use(item):
 	elif item in inventory and current_room == library and item == "silver key":
 		print("You use the silver key and one of the locks of the door open")
 		silver_key_used = True
-	else:
-		print("You can't use that here")
 
-	if rusty_key_used == True and silver_key_used == True and golden_key_used == True:
+	elif rusty_key_used == True and silver_key_used == True and golden_key_used == True:
 		print("You enter the final key and it unlocks a door to the west")
 		library.west = computer_room
 	
@@ -195,6 +200,8 @@ def  use(item):
 		current_room = jail
 		print("you climb through the cell bars and are now in the jail room")
 		print(current_room)		
+	else:
+		print("You can't use that here")
 
 @when("read ITEM")
 @when("look at ITEM")
@@ -231,6 +238,22 @@ def drink(item):
 	elif item in current_room == jail and item == "dead body":
 		print("You eat the dead man. You died because of bad ideas.")
 		quit()
+	
+	elif item in inventory and current_room == staff_room and item == "golden key":
+		print("You eat the golden key. Kind of hard to solaw buy you fight through it. You died because of digestive problems.")
+		quit()
+
+	elif item in inventory and current_room == bathroom and item == "silver key":
+		print("You eat the silver key. Kind of hard to solaw buy you fight through it. You died because of digestive problems.")
+		quit()
+
+	elif item in inventory and current_room == folder_room and item == "rusty key":
+		print("You eat the rusty key. Kind of hard to solaw buy you fight through it. You died because of digestive problems.")
+		quit()
+
+@when("")
+	elif item in inventory and current_room == staff_room and item == "light"
+
 
 
 @when("enter password")
